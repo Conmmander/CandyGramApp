@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Valentine {
+  id        String   @id @default(cuid())
+  to        String
+  from      String
+  imageData String   // Stores the Base64 Data URL of the drawing
+  createdAt DateTime @default(now())
+}
