@@ -59,6 +59,16 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginTop: 2,
   },
+  cutGuide: {
+    position: "absolute",
+    border: "0.5pt solid #e5e5e5", // Very faint grey line
+    width: "100%",
+    height: "100%",
+    top: 0,
+    left: 0,
+    borderRadius: 6,
+    zIndex: -1,
+  },
 });
 
 interface Valentine {
@@ -74,6 +84,7 @@ export const ValentineDocument = ({ data }: { data: Valentine[] }) => (
     <Page size="LETTER" style={styles.page}>
       {data.map((val) => (
         <View key={val.id} style={styles.card} wrap={false}>
+          <View style={styles.cutGuide} />
           <Text style={styles.header}>To: {val.to}</Text>
 
           <View style={styles.imageContainer}>
