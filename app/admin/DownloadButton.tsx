@@ -31,7 +31,6 @@ export default function DownloadButton({ data }: { data: Valentine[] }) {
       fileName="valentines.pdf"
       className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 font-bold"
     >
-      {/* @ts-expect-error -- The signature for render props in PDFDownloadLink can be tricky with types */}
       {({ blob, url, loading, error }) => (loading ? "Generating PDF..." : "Download PDF")}
     </PDFDownloadLink>
   );
