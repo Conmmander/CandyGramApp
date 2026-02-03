@@ -1,25 +1,21 @@
-"use client";
-
 import React from "react";
-import { Page, View, Document, StyleSheet, Image } from "@react-pdf/renderer";
+import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
 
+// Define styles
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",
     flexWrap: "wrap",
-    backgroundColor: "#FFFFFF",
-    paddingTop: 30,
-    paddingHorizontal: 30,
-    justifyContent: "space-between",
+    backgroundColor: "#ffffff",
+    padding: 10,
   },
   card: {
     width: "48%",
-    height: 235,
-    marginBottom: 10,
+    height: 350,
+    margin: "1%",
     position: "relative",
-    border: "1pt solid #ddd",
+    border: "1px solid #ccc",
   },
-  // Style for BOTH layers to ensure they overlap perfectly
   layer: {
     position: "absolute",
     top: 0,
@@ -27,34 +23,45 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  text: {
+    position: "absolute",
+    bottom: 5,
+    left: 5,
+    fontSize: 10,
+    color: "#888",
+  },
 });
 
+// FIXED: Removed 'template' from interface
 interface Valentine {
   id: string;
   imageData: string;
+  building: string;
+  createdAt: Date;
 }
 
 export const ValentineDocument = ({ data }: { data: Valentine[] }) => {
-  // Ensure we get the full path for the image
-  const templatePath = typeof window !== "undefined" ? `${window.location.origin}/template.png` : "/template.png";
+  // Use a hardcoded path since multi-template is removed
+  const templatePath = "/template.png";
 
   return (
     <Document>
       <Page size="LETTER" style={styles.page}>
-        {data.map((val) => (
-          <View key={val.id} style={styles.card} wrap={false}>
-            {/* FIRST: The Background (Bottom Layer) */}
-            <Image
-              src={templatePath}
-              style={styles.layer} // Apply generalized layer style
-            />
+        {data.map((val) => {
+          return (
+            <View key={val.id} style={styles.card} wrap={false}>
+              {/* Static Background */}
+              {/* Note: React-PDF often needs absolute URLs or base64.
+                  If '/template.png' fails in production, we might need to construct the full URL. */}
+              <Image src={templatePath} style={styles.layer} />
 
-            {/* SECOND: The Drawing (Top Layer)
-                Because this comes second in the code, it renders ON TOP.
-            */}
-            <Image src={val.imageData} style={styles.layer} />
-          </View>
-        ))}
+              {/* User Drawing */}
+              <Image src={val.imageData} style={styles.layer} />
+
+              <Text style={styles.text}>{val.building}</Text>
+            </View>
+          );
+        })}
       </Page>
     </Document>
   );

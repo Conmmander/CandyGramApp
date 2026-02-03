@@ -9,7 +9,6 @@ interface Valentine {
   id: string;
   building: string;
   imageData: string;
-  template: string;
   createdAt: Date;
 }
 
