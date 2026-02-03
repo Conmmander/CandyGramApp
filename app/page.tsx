@@ -10,10 +10,14 @@ const BUILDINGS = ["Williams", "Geisert", "Harper", "Heitz/Singles", "University
 export default function Home() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [imageData, setImageData] = useState("");
-  const [hasDrawn, setHasDrawn] = useState(false);
+  const [hasDrawn, setHasDrawn] = useState(false); // Track if canvas has content
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    // Double check before sending
+    if (!hasDrawn || !imageData) return;
+
     setStatus("submitting");
 
     const formData = new FormData(e.currentTarget);
@@ -24,6 +28,7 @@ export default function Home() {
     if (result?.success) {
       setStatus("success");
       setImageData("");
+      setHasDrawn(false);
     } else {
       setStatus("error");
     }
@@ -48,9 +53,6 @@ export default function Home() {
       <div className="bg-white w-full max-w-md p-6 rounded-2xl shadow-xl border-t-8 border-pink-500">
         <h1 className="text-2xl font-bold text-pink-600 mb-2 text-center">Customize a Candy Gram</h1>
         <p className="text-gray-500 text-sm text-center mb-6">Draw directly on the card below.</p>
-        <p className="text-gray-500 text-sm text-center mb-6">
-          Please keep the TO field legible so we can route it correctly!
-        </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Building Selector */}
@@ -63,7 +65,7 @@ export default function Home() {
                 name="building"
                 required
                 defaultValue=""
-                className="w-full p-2 border border-gray-200 text-black rounded-lg focus:border-pink-500 focus:ring-1 focus:ring-pink-500 outline-none bg-white appearance-none cursor-pointer"
+                className="w-full p-2 border border-gray-200 rounded-lg text-black focus:border-pink-500 focus:ring-1 focus:ring-pink-500 outline-none bg-white appearance-none cursor-pointer"
               >
                 <option value="" disabled>
                   Select a building...
@@ -74,7 +76,6 @@ export default function Home() {
                   </option>
                 ))}
               </select>
-              {/* Custom arrow icon for better styling */}
               <div className="absolute right-3 top-3 pointer-events-none">
                 <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
@@ -83,18 +84,23 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Canvas Component */}
           <DrawingCanvas
             onExport={setImageData}
-            onDrawStart={() => setHasDrawn(true)} // Enable button when they draw
+            onInteract={setHasDrawn} // Update state when user draws or clears
           />
 
           <button
             type="submit"
-            // Button is disabled if they haven't drawn OR if image data is missing
-            disabled={!hasDrawn || !imageData || status === "submitting"}
-            className="w-full bg-pink-500 text-white py-3 rounded-lg font-semibold hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            // Button is completely disabled until drawing occurs
+            disabled={!hasDrawn || status === "submitting"}
+            className={`w-full py-3 rounded-lg font-semibold transition-all ${
+              !hasDrawn || status === "submitting"
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-pink-500 text-white hover:bg-pink-600 shadow-md hover:shadow-lg"
+            }`}
           >
-            {status === "submitting" ? "Sending..." : "Send Valentine"}
+            {status === "submitting" ? "Sending..." : "Send Candy Gram"}
           </button>
         </form>
       </div>

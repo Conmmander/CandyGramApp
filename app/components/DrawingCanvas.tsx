@@ -2,24 +2,41 @@
 
 import React, { useRef, useState } from "react";
 import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
-import { Trash2, Palette, Pen } from "lucide-react";
+import { Trash2, Pen } from "lucide-react";
 
 interface DrawingCanvasProps {
   onExport: (dataUrl: string) => void;
-  onDrawStart?: () => void; // New prop to notify parent
+  onInteract: (hasContent: boolean) => void; // Tells parent if canvas has content
 }
 
-const COLORS = ["#000000", "#FF0000", "#FF00FF", "#0000FF", "#008000", "#FFA500"];
+// Expanded Color Palette
+const COLORS = [
+  "#000000", // Black
+  "#555555", // Grey
+  "#FF0000", // Red
+  "#FF7F00", // Orange
+  "#FFFF00", // Yellow
+  "#008000", // Green
+  "#0000FF", // Blue
+  "#4B0082", // Indigo
+  "#EE82EE", // Violet
+  "#FF69B4", // Hot Pink
+  "#8B4513", // Brown
+  "#00CED1", // Turquoise
+  "#FFD700", // Gold
+  "#C0C0C0", // Silver
+];
 
-export default function DrawingCanvas({ onExport, onDrawStart }: DrawingCanvasProps) {
+export default function DrawingCanvas({ onExport, onInteract }: DrawingCanvasProps) {
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
   const [strokeColor, setStrokeColor] = useState("#000000");
 
   const handleChange = async () => {
     if (canvasRef.current) {
-      // Notify parent that drawing has occurred
-      onDrawStart?.();
+      // 1. Tell parent "User has drawn something"
+      onInteract(true);
 
+      // 2. Export image
       const data = await canvasRef.current.exportImage("png");
       onExport(data);
     }
@@ -27,23 +44,27 @@ export default function DrawingCanvas({ onExport, onDrawStart }: DrawingCanvasPr
 
   const handleClear = () => {
     canvasRef.current?.clearCanvas();
-    onExport(""); // Clear the data in parent too
+    onInteract(false); // Tell parent "Canvas is empty"
+    onExport("");
   };
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-2 px-1">
-        <div className="flex gap-2">
-          {COLORS.map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setStrokeColor(c)}
-              className={`w-6 h-6 rounded-full border-2 ${strokeColor === c ? "border-gray-600 scale-110" : "border-transparent"}`}
-              style={{ backgroundColor: c }}
-            />
-          ))}
-        </div>
+      {/* Color Picker */}
+      <div className="flex flex-wrap gap-2 mb-3 justify-center">
+        {COLORS.map((c) => (
+          <button
+            key={c}
+            type="button"
+            onClick={() => setStrokeColor(c)}
+            className={`w-6 h-6 rounded-full border-2 transition-transform ${
+              strokeColor === c ? "border-gray-600 scale-125 shadow-md" : "border-transparent"
+            }`}
+            style={{ backgroundColor: c }}
+            title={c}
+          />
+        ))}
+        <div className="w-px h-6 bg-gray-300 mx-1"></div> {/* Separator */}
         <button
           type="button"
           onClick={handleClear}
@@ -53,11 +74,16 @@ export default function DrawingCanvas({ onExport, onDrawStart }: DrawingCanvasPr
         </button>
       </div>
 
+      {/* Canvas Area */}
       <div className="relative w-full aspect-[1.13] rounded-lg overflow-hidden shadow-inner border border-gray-300 bg-white">
+        {/* Layer 1: Background Template */}
+        {/* Ensure 'template.png' exists in your /public folder! */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 pointer-events-none select-none"
           style={{ backgroundImage: "url('/template.png')" }}
         />
+
+        {/* Layer 2: Drawing Canvas */}
         <div className="absolute inset-0 z-10 cursor-crosshair">
           <ReactSketchCanvas
             ref={canvasRef}
@@ -68,9 +94,11 @@ export default function DrawingCanvas({ onExport, onDrawStart }: DrawingCanvasPr
             width="100%"
             height="100%"
             className="bg-transparent"
+            canvasColor="transparent" // CRITICAL: Makes canvas see-through
           />
         </div>
       </div>
+
       <p className="text-center text-xs text-gray-400 mt-2 flex items-center justify-center gap-1">
         <Pen className="w-3 h-3" /> Draw inside the box above
       </p>
