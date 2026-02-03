@@ -22,14 +22,22 @@ export default function DrawingCanvas({ onExport }: DrawingCanvasProps) {
 
   const handleChange = async () => {
     if (canvasRef.current) {
-      const data = await canvasRef.current.exportImage("png");
-      onExport(data);
+      try {
+        // We wrap this in a try/catch because the library throws
+        // "No stroke found" if you export while the canvas is empty
+        // (e.g., accidental clicks or clearing).
+        const data = await canvasRef.current.exportImage("png");
+        onExport(data);
+      } catch (e) {
+        // This is expected behavior for empty canvas states; we can ignore it.
+        // console.log('Canvas is empty or updating');
+      }
     }
   };
 
   const handleClear = () => {
     canvasRef.current?.clearCanvas();
-    onExport("");
+    onExport(""); // Reset parent state
   };
 
   return (
@@ -51,33 +59,45 @@ export default function DrawingCanvas({ onExport }: DrawingCanvasProps) {
             ))}
           </div>
         </div>
-        <button type="button" onClick={handleClear} className="text-xs text-red-500 flex items-center gap-1">
+        <button
+          type="button"
+          onClick={handleClear}
+          className="text-xs text-red-500 flex items-center gap-1 hover:underline"
+        >
           <Trash2 className="w-3 h-3" /> Clear
         </button>
       </div>
 
       {/* CANVAS AREA */}
-      <div className="relative w-full aspect-[1.13] rounded-lg overflow-hidden shadow-inner border border-gray-300">
-        {/* 1. Background Template Layer */}
+      {/* aspect-[1.13] approximates the 8.5x11 card shape (landscape) */}
+      <div className="relative w-full aspect-[1.13] rounded-lg overflow-hidden shadow-inner border border-gray-300 bg-white">
+        {/* Layer 1: Background Template
+            Using absolute inset-0 ensures it fills the space.
+            pointer-events-none ensures clicks pass THROUGH it.
+        */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none opacity-50 md:opacity-100"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 pointer-events-none select-none"
           style={{ backgroundImage: "url('/template.png')" }}
         />
 
-        {/* 2. Drawing Layer (Transparent) */}
-        <ReactSketchCanvas
-          ref={canvasRef}
-          strokeWidth={STROKE_WIDTH}
-          strokeColor={strokeColor}
-          canvasColor="transparent" // CRITICAL: Allows background to show through
-          onChange={handleChange}
-          style={{ width: "100%", height: "100%" }}
-        />
+        {/* Layer 2: Drawing Canvas
+            Using absolute inset-0 z-10 ensures it sits physically ON TOP.
+        */}
+        <div className="absolute inset-0 z-10 cursor-crosshair">
+          <ReactSketchCanvas
+            ref={canvasRef}
+            strokeWidth={STROKE_WIDTH}
+            strokeColor={strokeColor}
+            canvasColor="transparent"
+            onChange={handleChange}
+            style={{ width: "100%", height: "100%" }}
+          />
+        </div>
       </div>
 
       <p className="text-xs text-gray-400 mt-2 text-center flex items-center justify-center gap-1">
         <Pen className="w-3 h-3" />
-        Write names or draw on the card!
+        Draw directly on the image above
       </p>
     </div>
   );
