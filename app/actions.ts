@@ -38,3 +38,15 @@ export async function getValentines() {
     ],
   });
 }
+
+export async function deleteValentine(id: string) {
+  try {
+    await prisma.valentine.delete({
+      where: { id },
+    });
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (e) {
+    return { error: "Failed to delete" };
+  }
+}
