@@ -10,6 +10,7 @@ const BUILDINGS = ["Williams", "Geisert", "Harper", "Heitz/Singles", "University
 export default function Home() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [imageData, setImageData] = useState("");
+  const [hasDrawn, setHasDrawn] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -82,12 +83,16 @@ export default function Home() {
             </div>
           </div>
 
-          <DrawingCanvas onExport={setImageData} />
+          <DrawingCanvas
+            onExport={setImageData}
+            onDrawStart={() => setHasDrawn(true)} // Enable button when they draw
+          />
 
           <button
             type="submit"
-            disabled={!imageData || status === "submitting"}
-            className="w-full bg-pink-500 text-white py-3 rounded-lg font-semibold hover:bg-pink-600 disabled:opacity-50"
+            // Button is disabled if they haven't drawn OR if image data is missing
+            disabled={!hasDrawn || !imageData || status === "submitting"}
+            className="w-full bg-pink-500 text-white py-3 rounded-lg font-semibold hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {status === "submitting" ? "Sending..." : "Send Valentine"}
           </button>

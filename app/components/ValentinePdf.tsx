@@ -1,20 +1,20 @@
 import React from "react";
-import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, View, Image, StyleSheet } from "@react-pdf/renderer";
 
-// Define styles
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",
     flexWrap: "wrap",
     backgroundColor: "#ffffff",
-    padding: 10,
+    padding: 20, // ample margins for printer bleed
+    alignContent: "flex-start",
   },
   card: {
-    width: "48%",
-    height: 350,
-    margin: "1%",
+    width: "46%", // Slightly less than 50% to account for gap
+    height: 230, // Approx 1/3rd of the page height (11in / 3 = ~3.6in)
+    margin: "2%",
     position: "relative",
-    border: "1px solid #ccc",
+    border: "1px solid #ddd", // Light border to guide cutting
   },
   layer: {
     position: "absolute",
@@ -22,17 +22,10 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     height: "100%",
-  },
-  text: {
-    position: "absolute",
-    bottom: 5,
-    left: 5,
-    fontSize: 10,
-    color: "#888",
+    objectFit: "cover", // Ensures it fills the box nicely
   },
 });
 
-// FIXED: Removed 'template' from interface
 interface Valentine {
   id: string;
   imageData: string;
@@ -41,27 +34,22 @@ interface Valentine {
 }
 
 export const ValentineDocument = ({ data }: { data: Valentine[] }) => {
-  // Use a hardcoded path since multi-template is removed
   const templatePath = "/template.png";
 
   return (
     <Document>
       <Page size="LETTER" style={styles.page}>
-        {data.map((val) => {
-          return (
-            <View key={val.id} style={styles.card} wrap={false}>
-              {/* Static Background */}
-              {/* Note: React-PDF often needs absolute URLs or base64.
-                  If '/template.png' fails in production, we might need to construct the full URL. */}
-              <Image src={templatePath} style={styles.layer} />
+        {data.map((val) => (
+          <View key={val.id} style={styles.card} wrap={false}>
+            {/* Background Template */}
+            <Image src={templatePath} style={styles.layer} />
 
-              {/* User Drawing */}
-              <Image src={val.imageData} style={styles.layer} />
+            {/* User Drawing */}
+            <Image src={val.imageData} style={styles.layer} />
 
-              <Text style={styles.text}>{val.building}</Text>
-            </View>
-          );
-        })}
+            {/* Building Text REMOVED as requested */}
+          </View>
+        ))}
       </Page>
     </Document>
   );
