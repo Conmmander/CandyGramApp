@@ -10,8 +10,6 @@ datasource db {
 
 model Valentine {
   id        String   @id @default(cuid())
-  to        String
-  from      String
   imageData String   // Stores the Base64 Data URL of the drawing
   createdAt DateTime @default(now())
 }
