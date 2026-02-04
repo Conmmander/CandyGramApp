@@ -71,7 +71,7 @@ export default function DrawingCanvas({ onExport, onInteract }: DrawingCanvasPro
                 setEraseMode(false);
                 canvasRef.current?.eraseMode(false);
               }}
-              className={`w-5 h-5 rounded-full border border-gray-300 transition-transform hover:scale-110 ${
+              className={`w-9 h-9 rounded-full border border-gray-300 transition-transform hover:scale-110 ${
                 !eraseMode && strokeColor === c ? "ring-2 ring-gray-600 scale-110 z-10" : ""
               }`}
               style={{ backgroundColor: c }}
