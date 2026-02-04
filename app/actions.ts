@@ -50,3 +50,9 @@ export async function deleteValentine(id: string) {
     return { error: "Failed to delete" };
   }
 }
+
+export async function verifyAdminPassword(input: string) {
+  // Define your password here or in .env (Recommended)
+  const CORRECT_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
+  return { success: input === CORRECT_PASSWORD };
+}
