@@ -12,33 +12,14 @@ interface DrawingCanvasProps {
 // Massive Color Palette
 const COLORS = [
   "#000000",
-  "#444444",
-  "#888888",
-  "#CCCCCC", // Grayscale
-  "#5B0F00",
   "#8B0000",
   "#FF0000",
-  "#FF4500", // Reds
-  "#FF8C00",
-  "#FFA500",
-  "#FFD700",
-  "#FFFF00", // Oranges/Yellows
-  "#006400",
   "#008000",
-  "#32CD32",
-  "#90EE90", // Greens
-  "#00008B",
-  "#0000FF",
   "#1E90FF",
   "#87CEEB", // Blues
   "#4B0082",
-  "#8A2BE2",
   "#FF00FF",
   "#FF69B4", // Purples/Pinks
-  "#8B4513",
-  "#D2691E",
-  "#F4A460",
-  "#FFF8DC", // Browns
 ];
 
 export default function DrawingCanvas({ onExport, onInteract }: DrawingCanvasProps) {
