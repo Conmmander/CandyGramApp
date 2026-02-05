@@ -129,8 +129,8 @@ export default function DrawingCanvas({ onExport, onInteract }: DrawingCanvasPro
         </div>
       </div>
 
-      <p className="text-center text-xs text-gray-400 mt-2 flex items-center justify-center gap-1">
-        <Pen className="w-3 h-3 select-none" /> Draw inside the box above
+      <p className="text-center text-xs text-gray-400 mt-2 flex items-center justify-center gap-1 select-none">
+        <Pen className="w-3 h-3" /> Draw inside the box above
       </p>
     </div>
   );
