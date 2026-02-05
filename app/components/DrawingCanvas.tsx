@@ -83,7 +83,7 @@ export default function DrawingCanvas({ onExport, onInteract }: DrawingCanvasPro
         {/* Tools Row */}
         <div className="flex justify-between items-center mt-2 px-1">
           <div className="flex gap-2">
-            <span className="text-xs font-bold text-gray-400 uppercase self-center mr-2">Tools:</span>
+            <span className="text-xs font-bold text-gray-400 uppercase self-center mr-2 select-none">Tools:</span>
             <button
               type="button"
               onClick={toggleEraser}
@@ -91,14 +91,14 @@ export default function DrawingCanvas({ onExport, onInteract }: DrawingCanvasPro
                 eraseMode ? "bg-pink-100 text-pink-600" : "text-gray-500 hover:bg-gray-100"
               }`}
             >
-              <Eraser className="w-3 h-3" /> Eraser
+              <Eraser className="w-3 h-3 select-none" /> Eraser
             </button>
           </div>
 
           <button
             type="button"
             onClick={handleClear}
-            className="text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1 text-xs uppercase font-bold"
+            className="select-none text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1 text-xs uppercase font-bold"
           >
             <Trash2 className="w-3 h-3" /> Clear All
           </button>
@@ -130,7 +130,7 @@ export default function DrawingCanvas({ onExport, onInteract }: DrawingCanvasPro
       </div>
 
       <p className="text-center text-xs text-gray-400 mt-2 flex items-center justify-center gap-1">
-        <Pen className="w-3 h-3" /> Draw inside the box above
+        <Pen className="w-3 h-3 select-none" /> Draw inside the box above
       </p>
     </div>
   );

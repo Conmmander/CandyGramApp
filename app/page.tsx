@@ -5,7 +5,7 @@ import { useState } from "react";
 import DrawingCanvas from "./components/DrawingCanvas";
 import { Heart, Building2 } from "lucide-react";
 
-const BUILDINGS = ["Williams", "Geisert", "Harper", "Heitz/Singles", "University"];
+const BUILDINGS = ["Williams", "Geisert", "Harper", "Heitz/Singles", "University", "Sisson"];
 
 export default function Home() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -51,14 +51,14 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-pink-50 flex flex-col items-center justify-center p-4">
       <div className="bg-white w-full max-w-md p-6 rounded-2xl shadow-xl border-t-8 border-pink-500">
-        <h1 className="text-2xl font-bold text-pink-600 mb-2 text-center">Customize a Candy Gram</h1>
-        <p className="text-gray-500 text-sm text-center mb-6">Draw directly on the card below.</p>
+        <h1 className="text-2xl font-bold text-pink-600 mb-2 text-center select-none">Customize a Candy Gram</h1>
+        <p className="text-gray-500 text-sm text-center mb-6 select-none">Draw directly on the card below.</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Building Selector */}
           <div>
             <label className="text-xs font-bold text-gray-500 uppercase mb-1 flex items-center gap-1">
-              <Building2 className="w-3 h-3" /> Destination Building
+              <Building2 className="w-3 h-3 select-none" /> Destination Building
             </label>
             <div className="relative">
               <select
@@ -94,7 +94,7 @@ export default function Home() {
             type="submit"
             // Button is completely disabled until drawing occurs
             disabled={!hasDrawn || status === "submitting"}
-            className={`w-full py-3 rounded-lg font-semibold transition-all ${
+            className={`w-full py-3 select-none rounded-lg font-semibold transition-all ${
               !hasDrawn || status === "submitting"
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : "bg-pink-500 text-white hover:bg-pink-600 shadow-md hover:shadow-lg"

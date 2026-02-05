@@ -10,7 +10,7 @@ const PdfDownloadButton = dynamic(() => import("./DownloadButton"), {
   loading: () => <span className="text-sm text-gray-400">Loading PDF engine...</span>,
 });
 
-const BUILDINGS = ["All Buildings", "Williams", "Geisert", "Harper", "Heitz/Singles", "University"];
+const BUILDINGS = ["All Buildings", "Williams", "Geisert", "Harper", "Heitz/Singles", "University", "Sisson"];
 
 interface Valentine {
   id: string;
