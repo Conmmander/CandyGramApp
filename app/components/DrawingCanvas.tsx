@@ -123,8 +123,7 @@ export default function DrawingCanvas({
         />
 
         {/* Layer 2: Canvas */}
-        <div className="absolute inset-0 z-10 cursor-crosshair">
-          select-none
+        <div className="absolute inset-0 z-10 cursor-crosshair select-none">
           <ReactSketchCanvas
             ref={canvasRef}
             strokeWidth={4}
