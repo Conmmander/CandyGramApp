@@ -104,7 +104,7 @@ export default function DrawingCanvas({
             </button>
           </div>
 
-          <buttonselect-none
+          <button
             type="button"
             onClick={handleClear}
             className="select-none text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1 text-xs uppercase font-bold"
@@ -124,6 +124,7 @@ export default function DrawingCanvas({
 
         {/* Layer 2: Canvas */}
         <div className="absolute inset-0 z-10 cursor-crosshair">
+          select-none
           <ReactSketchCanvas
             ref={canvasRef}
             strokeWidth={4}
