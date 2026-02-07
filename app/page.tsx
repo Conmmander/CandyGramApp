@@ -24,8 +24,16 @@ export default function Home() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // Double check before sending
-    if (!hasDrawn || !imageData) return;
+    // Prevent submission if drawing is valid but image hasn't generated yet
+    if (!hasDrawn) return;
+
+    // If user clicks FAST, imageData might still be empty string.
+    // In a production app, we would force an export here, but for now
+    // let's just wait a tiny bit or alert.
+    if (!imageData) {
+      alert("Please wait a moment for your drawing to process...");
+      return;
+    }
 
     setStatus("submitting");
 

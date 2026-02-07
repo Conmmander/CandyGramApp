@@ -29,44 +29,47 @@ export default function DrawingCanvas({
   const [strokeColor, setStrokeColor] = useState("#000000");
   const [eraseMode, setEraseMode] = useState(false);
 
-  // Timer reference for the debounce
+  // Track if we have already told the parent that the canvas is dirty
+  // This prevents re-rendering the parent on every single stroke
+  const hasNotifiedDrawRef = useRef(false);
+
+  // Timer for delayed image generation
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Clean up timer on unmount
   useEffect(() => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
 
-  const handleChange = async () => {
-    if (!canvasRef.current) return;
-
-    // 1. FAST CHECK: Just check if paths exist to unlock the UI immediately
-    // exportPaths is much faster than exportImage
-    canvasRef.current.exportPaths().then((paths) => {
-      onInteract(paths.length > 0);
-    });
-
-    // 2. HEAVY LIFTING: Debounce the PNG generation
-    // If the user is writing "Hello", we don't want to generate an image
-    // for H, then e, then l... we want to wait until they pause.
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+  const handleChange = () => {
+    // 1. INSTANT CHECK: If we haven't unlocked the button yet, do it now.
+    // We assume if onChange fires, the user drew something.
+    // We do NOT ask for paths (heavy) or export images (heavy) here.
+    if (!hasNotifiedDrawRef.current) {
+      hasNotifiedDrawRef.current = true;
+      onInteract(true);
     }
 
+    // 2. DEBOUNCE IMAGE EXPORT
+    // Clear the previous timer so we don't generate images while you are writing 'A', 'B', 'C'
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    // Wait 500ms after the LAST stroke to generate the PNG
     timeoutRef.current = setTimeout(async () => {
       if (canvasRef.current) {
         const data = await canvasRef.current.exportImage("png");
         onExport(data);
       }
-    }, 400); // Wait 400ms after the last stroke to generate image
+    }, 500);
   };
 
   const handleClear = () => {
     canvasRef.current?.clearCanvas();
-    onInteract(false);
-    onExport("");
+    hasNotifiedDrawRef.current = false; // Reset our tracker
+    onInteract(false); // Lock the button
+    onExport(""); // Clear the image data
+
     setEraseMode(false);
     setStrokeColor("#000000");
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -133,7 +136,7 @@ export default function DrawingCanvas({
       </div>
 
       {/* Canvas Area */}
-      {/* touch-action: none prevents scrolling while drawing */}
+      {/* touch-action: none is critical for iPad stylus support */}
       <div className="relative w-full aspect-[1.13] rounded-lg overflow-hidden shadow-inner border border-gray-300 bg-white group touch-none">
         {/* Layer 1: Template */}
         <div
