@@ -22,7 +22,10 @@ const COLORS = [
   "#FF69B4", // Purples/Pinks
 ];
 
-export default function DrawingCanvas({ onExport, onInteract }: DrawingCanvasProps) {
+export default function DrawingCanvas({
+  onExport,
+  onInteract,
+}: DrawingCanvasProps) {
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
   const [strokeColor, setStrokeColor] = useState("#000000");
   const [eraseMode, setEraseMode] = useState(false);
@@ -72,7 +75,9 @@ export default function DrawingCanvas({ onExport, onInteract }: DrawingCanvasPro
                 canvasRef.current?.eraseMode(false);
               }}
               className={`w-9 h-9 rounded-full border border-gray-300 transition-transform hover:scale-110 ${
-                !eraseMode && strokeColor === c ? "ring-2 ring-gray-600 scale-110 z-10" : ""
+                !eraseMode && strokeColor === c
+                  ? "ring-2 ring-gray-600 scale-110 z-10"
+                  : ""
               }`}
               style={{ backgroundColor: c }}
               title={c}
@@ -83,15 +88,19 @@ export default function DrawingCanvas({ onExport, onInteract }: DrawingCanvasPro
         {/* Tools Row */}
         <div className="flex justify-between items-center mt-2 px-1">
           <div className="flex gap-2">
-            <span className="text-xs font-bold text-gray-400 uppercase self-center mr-2 select-none">Tools:</span>
+            <span className="text-xs font-bold text-gray-400 uppercase self-center mr-2 select-none">
+              Tools:
+            </span>
             <button
               type="button"
               onClick={toggleEraser}
-              className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-bold transition-colors ${
-                eraseMode ? "bg-pink-100 text-pink-600" : "text-gray-500 hover:bg-gray-100"
+              className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-bold transition-colors select-none ${
+                eraseMode
+                  ? "bg-pink-100 text-pink-600"
+                  : "text-gray-500 hover:bg-gray-100"
               }`}
             >
-              <Eraser className="w-3 h-3 select-none" /> Eraser
+              <Eraser className="w-3 h-3" /> Eraser
             </button>
           </div>
 

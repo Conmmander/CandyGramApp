@@ -5,10 +5,19 @@ import { useState } from "react";
 import DrawingCanvas from "./components/DrawingCanvas";
 import { Heart, Building2 } from "lucide-react";
 
-const BUILDINGS = ["Williams", "Geisert", "Harper", "Heitz/Singles", "University", "Sisson"];
+const BUILDINGS = [
+  "Williams",
+  "Geisert",
+  "Harper",
+  "Heitz/Singles",
+  "University",
+  "Sisson",
+];
 
 export default function Home() {
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [status, setStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
   const [imageData, setImageData] = useState("");
   const [hasDrawn, setHasDrawn] = useState(false); // Track if canvas has content
 
@@ -39,8 +48,13 @@ export default function Home() {
       <main className="min-h-screen bg-pink-50 flex flex-col items-center justify-center p-4">
         <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-md border-2 border-pink-200">
           <Heart className="w-16 h-16 text-pink-500 mx-auto mb-4 fill-pink-500 animate-bounce" />
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Submitted!</h1>
-          <button onClick={() => setStatus("idle")} className="text-pink-600 underline">
+          <h1 className="text-2xl font-bold text-gray-800 mb-2 select-none">
+            Submitted!
+          </h1>
+          <button
+            onClick={() => setStatus("idle")}
+            className="text-pink-600 underline select-none"
+          >
             Send another
           </button>
         </div>
@@ -51,14 +65,18 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-pink-50 flex flex-col items-center justify-center p-4">
       <div className="bg-white w-full max-w-md p-6 rounded-2xl shadow-xl border-t-8 border-pink-500">
-        <h1 className="text-2xl font-bold text-pink-600 mb-2 text-center select-none">Customize a Candy Gram</h1>
-        <p className="text-gray-500 text-sm text-center mb-6 select-none">Draw directly on the card below.</p>
+        <h1 className="text-2xl font-bold text-pink-600 mb-2 text-center select-none">
+          Customize a Candy Gram
+        </h1>
+        <p className="text-gray-500 text-sm text-center mb-6 select-none">
+          Draw directly on the card below.
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Building Selector */}
           <div>
-            <label className="text-xs font-bold text-gray-500 uppercase mb-1 flex items-center gap-1">
-              <Building2 className="w-3 h-3 select-none" /> Destination Building
+            <label className="text-xs font-bold text-gray-500 uppercase mb-1 flex items-center gap-1 select-none">
+              <Building2 className="w-3 h-3" /> Destination Building
             </label>
             <div className="relative">
               <select
@@ -77,8 +95,18 @@ export default function Home() {
                 ))}
               </select>
               <div className="absolute right-3 top-3 pointer-events-none">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
                 </svg>
               </div>
             </div>
