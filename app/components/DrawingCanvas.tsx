@@ -64,7 +64,7 @@ export default function DrawingCanvas({
     <div className="w-full">
       {/* Color Palette Grid */}
       <div className="mb-3">
-        <div className="flex flex-wrap gap-1.5 justify-center bg-gray-50 p-2 rounded-lg border border-gray-100">
+        <div className="select-none flex flex-wrap gap-1.5 justify-center bg-gray-50 p-2 rounded-lg border border-gray-100">
           {COLORS.map((c) => (
             <button
               key={c}
@@ -74,7 +74,7 @@ export default function DrawingCanvas({
                 setEraseMode(false);
                 canvasRef.current?.eraseMode(false);
               }}
-              className={`w-9 h-9 rounded-full border border-gray-300 transition-transform hover:scale-110 ${
+              className={`w-9 h-9 rounded-full border border-gray-300 transition-transform hover:scale-110 select-none ${
                 !eraseMode && strokeColor === c
                   ? "ring-2 ring-gray-600 scale-110 z-10"
                   : ""
@@ -86,7 +86,7 @@ export default function DrawingCanvas({
         </div>
 
         {/* Tools Row */}
-        <div className="flex justify-between items-center mt-2 px-1">
+        <div className="flex justify-between items-center mt-2 px-1 select-none">
           <div className="flex gap-2">
             <span className="text-xs font-bold text-gray-400 uppercase self-center mr-2 select-none">
               Tools:
@@ -104,7 +104,7 @@ export default function DrawingCanvas({
             </button>
           </div>
 
-          <button
+          <buttonselect-none
             type="button"
             onClick={handleClear}
             className="select-none text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1 text-xs uppercase font-bold"
