@@ -7,21 +7,30 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     backgroundColor: "#ffffff",
-    // 30pt padding on sides leaves 552pt printable width
-    paddingTop: 30,
-    paddingLeft: 30,
-    paddingRight: 10, // slightly less right padding to accommodate flex wrap oddities
-    paddingBottom: 20,
+    // 30pt padding around the edge
+    padding: 30,
+    // Distribute space between columns automatically
+    justifyContent: "space-between",
+    alignContent: "flex-start",
   },
   card: {
-    // Width: (552 / 2) - gap = approx 270pt
+    // Width calculation:
+    // Page (612) - Padding (60) = 552pt available.
+    // 552 / 2 = 276pt max per card.
+    // Set to 270pt to be safe and leave a visual gap.
     width: 270,
-    // Height: We need to fit 3 in 740pt. 740/3 = 246. Let's start with 230 to be safe.
+
+    // Height calculation:
+    // Page (792) - Padding (60) = 732pt available.
+    // 732 / 3 = 244pt max per card.
+    // Set to 230pt to allow for margins.
     height: 230,
+
+    // Small margin bottom to separate rows
     marginBottom: 10,
-    marginRight: 20, // Create horizontal gap
+
     position: "relative",
-    border: "1px solid #ddd",
+    border: "1px dashed #cccccc", // Dashed line is better for cutting guides
   },
   layer: {
     position: "absolute",
@@ -29,7 +38,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     height: "100%",
-    objectFit: "cover",
+    objectFit: "contain", // Changed to contain to ensure full image is visible
   },
 });
 

@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Candy Grams",
   description: "Make candygrams to send to your fellow RAs!",
+  icons: {
+    icon: "/icon.svg", // This looks for public/icon.svg
+  },
 };
 
 export default function RootLayout({
@@ -24,7 +27,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        {children}
+      </body>
     </html>
   );
 }
