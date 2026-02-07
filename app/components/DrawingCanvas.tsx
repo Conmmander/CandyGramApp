@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
 import { Trash2, Pen, Eraser } from "lucide-react";
 
@@ -29,14 +29,38 @@ export default function DrawingCanvas({
   const [strokeColor, setStrokeColor] = useState("#000000");
   const [eraseMode, setEraseMode] = useState(false);
 
+  // Timer reference for the debounce
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
   const handleChange = async () => {
-    if (canvasRef.current) {
-      const paths = await canvasRef.current.exportPaths();
-      const hasStrokes = paths.length > 0;
-      onInteract(hasStrokes);
-      const data = await canvasRef.current.exportImage("png");
-      onExport(data);
+    if (!canvasRef.current) return;
+
+    // 1. FAST CHECK: Just check if paths exist to unlock the UI immediately
+    // exportPaths is much faster than exportImage
+    canvasRef.current.exportPaths().then((paths) => {
+      onInteract(paths.length > 0);
+    });
+
+    // 2. HEAVY LIFTING: Debounce the PNG generation
+    // If the user is writing "Hello", we don't want to generate an image
+    // for H, then e, then l... we want to wait until they pause.
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
+
+    timeoutRef.current = setTimeout(async () => {
+      if (canvasRef.current) {
+        const data = await canvasRef.current.exportImage("png");
+        onExport(data);
+      }
+    }, 400); // Wait 400ms after the last stroke to generate image
   };
 
   const handleClear = () => {
@@ -45,6 +69,7 @@ export default function DrawingCanvas({
     onExport("");
     setEraseMode(false);
     setStrokeColor("#000000");
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
   };
 
   const toggleEraser = () => {
@@ -108,6 +133,7 @@ export default function DrawingCanvas({
       </div>
 
       {/* Canvas Area */}
+      {/* touch-action: none prevents scrolling while drawing */}
       <div className="relative w-full aspect-[1.13] rounded-lg overflow-hidden shadow-inner border border-gray-300 bg-white group touch-none">
         {/* Layer 1: Template */}
         <div
@@ -116,7 +142,6 @@ export default function DrawingCanvas({
         />
 
         {/* Layer 2: Canvas */}
-        {/* IMPORTANT: 'touch-none' on wrapper and style fix on canvas handles the stylus */}
         <div className="absolute inset-0 z-10 cursor-crosshair select-none touch-none">
           <ReactSketchCanvas
             ref={canvasRef}
