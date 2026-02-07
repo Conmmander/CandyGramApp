@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect x="10" y="15" width="80" height="70" rx="10" fill="#fbcfe8" stroke="#ec4899" stroke-width="4"/>
+  <path d="M20 25 L50 55 L80 25" fill="none" stroke="#ec4899" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M50 45 L50 45" fill="#ec4899">
+    <animate attributeName="d" dur="2s" repeatCount="indefinite"
+      values="M50 55 L35 40 A10 10 0 0 1 50 40 A10 10 0 0 1 65 40 Z; M50 65 L30 45 A12 12 0 0 1 50 45 A12 12 0 0 1 70 45 Z; M50 55 L35 40 A10 10 0 0 1 50 40 A10 10 0 0 1 65 40 Z" />
+  </path>
+  <path d="M35 40 A10 10 0 0 1 50 40 A10 10 0 0 1 65 40 L50 55 Z" fill="#ec4899" />
+</svg>

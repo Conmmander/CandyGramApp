@@ -1,20 +1,27 @@
 import React from "react";
 import { Document, Page, View, Image, StyleSheet } from "@react-pdf/renderer";
 
+// US Letter is 612pt x 792pt
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",
     flexWrap: "wrap",
     backgroundColor: "#ffffff",
-    padding: 20, // ample margins for printer bleed
-    alignContent: "flex-start",
+    // 30pt padding on sides leaves 552pt printable width
+    paddingTop: 30,
+    paddingLeft: 30,
+    paddingRight: 10, // slightly less right padding to accommodate flex wrap oddities
+    paddingBottom: 20,
   },
   card: {
-    width: "46%", // Slightly less than 50% to account for gap
-    height: 230, // Approx 1/3rd of the page height (11in / 3 = ~3.6in)
-    margin: "2%",
+    // Width: (552 / 2) - gap = approx 270pt
+    width: 270,
+    // Height: We need to fit 3 in 740pt. 740/3 = 246. Let's start with 230 to be safe.
+    height: 230,
+    marginBottom: 10,
+    marginRight: 20, // Create horizontal gap
     position: "relative",
-    border: "1px solid #ddd", // Light border to guide cutting
+    border: "1px solid #ddd",
   },
   layer: {
     position: "absolute",
@@ -22,7 +29,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     height: "100%",
-    objectFit: "cover", // Ensures it fills the box nicely
+    objectFit: "cover",
   },
 });
 
@@ -46,8 +53,6 @@ export const ValentineDocument = ({ data }: { data: Valentine[] }) => {
 
             {/* User Drawing */}
             <Image src={val.imageData} style={styles.layer} />
-
-            {/* Building Text REMOVED as requested */}
           </View>
         ))}
       </Page>

@@ -9,17 +9,16 @@ interface DrawingCanvasProps {
   onInteract: (hasContent: boolean) => void;
 }
 
-// Massive Color Palette
 const COLORS = [
   "#000000",
   "#8B0000",
   "#FF0000",
   "#008000",
   "#1E90FF",
-  "#87CEEB", // Blues
+  "#87CEEB",
   "#4B0082",
   "#FF00FF",
-  "#FF69B4", // Purples/Pinks
+  "#FF69B4",
 ];
 
 export default function DrawingCanvas({
@@ -32,14 +31,9 @@ export default function DrawingCanvas({
 
   const handleChange = async () => {
     if (canvasRef.current) {
-      // 1. ROBUST CHECK: Ask the canvas for the list of drawn paths
       const paths = await canvasRef.current.exportPaths();
-
-      // 2. Only consider it "drawn" if there is at least one stroke
       const hasStrokes = paths.length > 0;
       onInteract(hasStrokes);
-
-      // 3. Export the visual image
       const data = await canvasRef.current.exportImage("png");
       onExport(data);
     }
@@ -47,10 +41,10 @@ export default function DrawingCanvas({
 
   const handleClear = () => {
     canvasRef.current?.clearCanvas();
-    onInteract(false); // Force disable
+    onInteract(false);
     onExport("");
-    setEraseMode(false); // Reset eraser
-    setStrokeColor("#000000"); // Reset color
+    setEraseMode(false);
+    setStrokeColor("#000000");
   };
 
   const toggleEraser = () => {
@@ -62,7 +56,7 @@ export default function DrawingCanvas({
 
   return (
     <div className="w-full">
-      {/* Color Palette Grid */}
+      {/* Colors */}
       <div className="mb-3">
         <div className="select-none flex flex-wrap gap-1.5 justify-center bg-gray-50 p-2 rounded-lg border border-gray-100">
           {COLORS.map((c) => (
@@ -85,7 +79,7 @@ export default function DrawingCanvas({
           ))}
         </div>
 
-        {/* Tools Row */}
+        {/* Tools */}
         <div className="flex justify-between items-center mt-2 px-1 select-none">
           <div className="flex gap-2">
             <span className="text-xs font-bold text-gray-400 uppercase self-center mr-2 select-none">
@@ -103,7 +97,6 @@ export default function DrawingCanvas({
               <Eraser className="w-3 h-3" /> Eraser
             </button>
           </div>
-
           <button
             type="button"
             onClick={handleClear}
@@ -115,7 +108,7 @@ export default function DrawingCanvas({
       </div>
 
       {/* Canvas Area */}
-      <div className="relative w-full aspect-[1.13] rounded-lg overflow-hidden shadow-inner border border-gray-300 bg-white group">
+      <div className="relative w-full aspect-[1.13] rounded-lg overflow-hidden shadow-inner border border-gray-300 bg-white group touch-none">
         {/* Layer 1: Template */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 pointer-events-none select-none"
@@ -123,17 +116,20 @@ export default function DrawingCanvas({
         />
 
         {/* Layer 2: Canvas */}
-        <div className="absolute inset-0 z-10 cursor-crosshair select-none">
+        {/* IMPORTANT: 'touch-none' on wrapper and style fix on canvas handles the stylus */}
+        <div className="absolute inset-0 z-10 cursor-crosshair select-none touch-none">
           <ReactSketchCanvas
             ref={canvasRef}
             strokeWidth={4}
             strokeColor={strokeColor}
             onChange={handleChange}
-            style={{ border: "none" }}
+            style={{ border: "none", touchAction: "none" }}
             width="100%"
             height="100%"
             className="bg-transparent"
             canvasColor="transparent"
+            allowOnlyPointerType="all"
+            withTimestamp={true}
           />
         </div>
       </div>
