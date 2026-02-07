@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
 import { Trash2, Pen, Eraser } from "lucide-react";
 
@@ -29,11 +29,8 @@ export default function DrawingCanvas({
   const [strokeColor, setStrokeColor] = useState("#000000");
   const [eraseMode, setEraseMode] = useState(false);
 
-  // Track if we have already told the parent that the canvas is dirty
-  // This prevents re-rendering the parent on every single stroke
+  // Ref to track if we've already notified the parent (prevents constant re-renders)
   const hasNotifiedDrawRef = useRef(false);
-
-  // Timer for delayed image generation
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -42,34 +39,31 @@ export default function DrawingCanvas({
     };
   }, []);
 
-  const handleChange = () => {
-    // 1. INSTANT CHECK: If we haven't unlocked the button yet, do it now.
-    // We assume if onChange fires, the user drew something.
-    // We do NOT ask for paths (heavy) or export images (heavy) here.
+  // CRITICAL FIX: Wrap in useCallback so the function reference is stable.
+  // This prevents the Canvas from detaching/reattaching listeners on every render.
+  const handleChange = useCallback(() => {
+    // 1. INSTANT UNLOCK
     if (!hasNotifiedDrawRef.current) {
       hasNotifiedDrawRef.current = true;
       onInteract(true);
     }
 
-    // 2. DEBOUNCE IMAGE EXPORT
-    // Clear the previous timer so we don't generate images while you are writing 'A', 'B', 'C'
+    // 2. DEBOUNCE IMAGE GENERATION
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-    // Wait 500ms after the LAST stroke to generate the PNG
     timeoutRef.current = setTimeout(async () => {
       if (canvasRef.current) {
         const data = await canvasRef.current.exportImage("png");
         onExport(data);
       }
     }, 500);
-  };
+  }, [onExport, onInteract]);
 
   const handleClear = () => {
     canvasRef.current?.clearCanvas();
-    hasNotifiedDrawRef.current = false; // Reset our tracker
-    onInteract(false); // Lock the button
-    onExport(""); // Clear the image data
-
+    hasNotifiedDrawRef.current = false;
+    onInteract(false);
+    onExport("");
     setEraseMode(false);
     setStrokeColor("#000000");
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -136,8 +130,20 @@ export default function DrawingCanvas({
       </div>
 
       {/* Canvas Area */}
-      {/* touch-action: none is critical for iPad stylus support */}
-      <div className="relative w-full aspect-[1.13] rounded-lg overflow-hidden shadow-inner border border-gray-300 bg-white group touch-none">
+      {/* CRITICAL CSS FIXES:
+         1. touch-action: none -> Stops scrolling
+         2. user-select: none -> Stops text selection highlights
+         3. -webkit-touch-callout: none -> Stops long-press menus
+      */}
+      <div
+        className="relative w-full aspect-[1.13] rounded-lg overflow-hidden shadow-inner border border-gray-300 bg-white group"
+        style={{
+          touchAction: "none",
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          WebkitTouchCallout: "none",
+        }}
+      >
         {/* Layer 1: Template */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 pointer-events-none select-none"
@@ -145,7 +151,10 @@ export default function DrawingCanvas({
         />
 
         {/* Layer 2: Canvas */}
-        <div className="absolute inset-0 z-10 cursor-crosshair select-none touch-none">
+        <div
+          className="absolute inset-0 z-10 cursor-crosshair select-none"
+          style={{ touchAction: "none" }}
+        >
           <ReactSketchCanvas
             ref={canvasRef}
             strokeWidth={4}
