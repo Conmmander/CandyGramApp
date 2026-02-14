@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getValentines, deleteValentine, verifyAdminPassword } from "../actions"; // Import the new check
+import { getValentines, deleteValentine, verifyAdminPassword } from "../actions";
 import dynamic from "next/dynamic";
-import { Trash2, Filter, Loader2, Lock } from "lucide-react";
+import { Filter, Loader2, Lock } from "lucide-react";
+import ValentinePreview from "@/components/ValentinePreview"; // Import the component
 
 const PdfDownloadButton = dynamic(() => import("./DownloadButton"), {
   ssr: false,
@@ -169,33 +170,7 @@ export default function AdminPage() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filteredData.map((val) => (
-                  <tr key={val.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="p-4 w-24">
-                      <div className="relative w-16 h-14 bg-gray-100 rounded border border-gray-200 overflow-hidden">
-                        <img src="/template.png" className="absolute inset-0 w-full h-full object-cover opacity-50" />
-                        <img src={val.imageData} className="absolute inset-0 w-full h-full object-contain" />
-                      </div>
-                    </td>
-                    <td className="p-4 text-sm text-gray-600">{new Date(val.createdAt).toLocaleString()}</td>
-                    <td className="p-4">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
-                        {val.building}
-                      </span>
-                    </td>
-                    <td className="p-4 text-right">
-                      <button
-                        onClick={() => handleDelete(val.id)}
-                        disabled={deletingId === val.id}
-                        className="text-gray-400 hover:text-red-600 transition-colors p-2 rounded-md hover:bg-red-50"
-                      >
-                        {deletingId === val.id ? (
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                        ) : (
-                          <Trash2 className="w-5 h-5" />
-                        )}
-                      </button>
-                    </td>
-                  </tr>
+                  <ValentinePreview key={val.id} val={val} deletingId={deletingId} onDelete={handleDelete} />
                 ))}
               </tbody>
             </table>
