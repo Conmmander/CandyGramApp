@@ -21,57 +21,37 @@ export default function ValentinePreview({ val, deletingId, onDelete }: Valentin
   const formattedDate = new Date(val.createdAt).toLocaleString();
 
   return (
-    <>
-      <tr className="hover:bg-gray-50 transition-colors">
+    <tr className="hover:bg-gray-50 transition-colors">
+      {/* 1. Preview Cell (Thumbnail AND Modal live here) */}
+      <td className="p-4 w-24">
         {/* Clickable Thumbnail */}
-        <td className="p-4 w-24">
-          <div
-            onClick={() => setIsEnlarged(true)}
-            className="group relative w-16 h-14 bg-gray-100 rounded border border-gray-200 overflow-hidden cursor-pointer"
-          >
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors z-20 flex items-center justify-center">
-              <ZoomIn className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 drop-shadow-md" />
-            </div>
-            <img
-              src="/template.png"
-              className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
-              alt="template"
-            />
-            <img src={val.imageData} className="absolute inset-0 w-full h-full object-contain z-10" alt="drawing" />
+        <div
+          onClick={() => setIsEnlarged(true)}
+          className="group relative w-16 h-14 bg-gray-100 rounded border border-gray-200 overflow-hidden cursor-pointer"
+        >
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors z-20 flex items-center justify-center">
+            <ZoomIn className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 drop-shadow-md" />
           </div>
-        </td>
+          <img
+            src="/template.png"
+            className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
+            alt="template"
+          />
+          <img src={val.imageData} className="absolute inset-0 w-full h-full object-contain z-10" alt="drawing" />
+        </div>
 
-        <td className="p-4 text-sm text-gray-600">{formattedDate}</td>
-
-        <td className="p-4">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
-            {val.building}
-          </span>
-        </td>
-
-        <td className="p-4 text-right">
-          <button
-            onClick={() => onDelete(val.id)}
-            disabled={deletingId === val.id}
-            className="text-gray-400 hover:text-red-600 transition-colors p-2 rounded-md hover:bg-red-50 disabled:opacity-50"
-          >
-            {deletingId === val.id ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
-          </button>
-        </td>
-      </tr>
-
-      {/* Enlarged Modal Overlay */}
-      {isEnlarged && (
-        <td className="p-0 m-0">
-          {" "}
-          {/* Wrapper to keep HTML valid inside a table body */}
+        {/* Enlarged Modal Overlay (Now safely inside a valid table cell!) */}
+        {isEnlarged && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity"
-            onClick={() => setIsEnlarged(false)}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevents click from bubbling up
+              setIsEnlarged(false);
+            }}
           >
             <div
-              className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col"
-              onClick={(e) => e.stopPropagation()} // Stop clicks inside from closing it
+              className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col cursor-auto"
+              onClick={(e) => e.stopPropagation()} // Stop clicks inside the white box from closing the modal
             >
               {/* Modal Header */}
               <div className="flex justify-between items-center p-4 border-b border-gray-100 bg-gray-50">
@@ -82,8 +62,10 @@ export default function ValentinePreview({ val, deletingId, onDelete }: Valentin
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => {
-                      onDelete(val.id);
-                      setIsEnlarged(false);
+                      if (confirm("Are you sure you want to delete this card?")) {
+                        onDelete(val.id);
+                        setIsEnlarged(false);
+                      }
                     }}
                     className="flex items-center gap-1 px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
                   >
@@ -105,8 +87,29 @@ export default function ValentinePreview({ val, deletingId, onDelete }: Valentin
               </div>
             </div>
           </div>
-        </td>
-      )}
-    </>
+        )}
+      </td>
+
+      {/* 2. Date Cell */}
+      <td className="p-4 text-sm text-gray-600">{formattedDate}</td>
+
+      {/* 3. Building Cell */}
+      <td className="p-4">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
+          {val.building}
+        </span>
+      </td>
+
+      {/* 4. Actions Cell */}
+      <td className="p-4 text-right">
+        <button
+          onClick={() => onDelete(val.id)}
+          disabled={deletingId === val.id}
+          className="text-gray-400 hover:text-red-600 transition-colors p-2 rounded-md hover:bg-red-50 disabled:opacity-50"
+        >
+          {deletingId === val.id ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
+        </button>
+      </td>
+    </tr>
   );
 }
