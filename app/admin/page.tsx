@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getValentines, deleteValentine, verifyAdminPassword } from "../actions";
 import dynamic from "next/dynamic";
 import { Filter, Loader2, Lock } from "lucide-react";
-import ValentinePreview from "@/components/ValentinePreview"; // Import the component
+import ValentinePreview from "../components/ValentinePreview"; // Import the component
 
 const PdfDownloadButton = dynamic(() => import("./DownloadButton"), {
   ssr: false,
